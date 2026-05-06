@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sashank Vutukuri — DS & AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1208;
+  --paper: #f5f0e8;
+  --paper2: #ede8de;
+  --amber: #c8621a;
+  --amber-light: #e8831f;
+  --amber-pale: #fdf3e7;
+  --muted: #7a6f60;
+  --border: #d8d0c0;
+  --white: #fff;
+  --serif: 'Playfair Display', Georgia, serif;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow-x: hidden;
+}
+
+/* Grain texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 4rem;
+  background: rgba(245,240,232,0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-name {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.nav-name span { color: var(--amber); font-style: italic; }
+
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding-top: 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 4rem 2rem;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: up 0.7s 0.1s ease forwards;
+}
+
+.hero-eyebrow-line {
+  width: 40px;
+  height: 1px;
+  background: var(--amber);
+}
+
+.hero-eyebrow span {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(4.5rem, 9vw, 9rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: up 0.7s 0.2s ease forwards;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.hero-headline .outline {
+  -webkit-text-stroke: 2px var(--ink);
+  color: transparent;
+}
+
+.hero-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: end;
+  opacity: 0;
+  animation: up 0.7s 0.35s ease forwards;
+}
+
+.hero-bio {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 480px;
+  font-weight: 300;
+}
+
+.hero-bio strong { color: var(--ink); font-weight: 600; }
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.hero-stat {
+  background: var(--paper);
+  padding: 1.25rem 1.5rem;
+  transition: background 0.2s;
+}
+
+.hero-stat:hover { background: var(--amber-pale); }
+
+.hero-stat-num {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.hero-stat-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-ticker {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.85rem 4rem;
+  display: flex;
+  gap: 4rem;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  animation: up 0.5s 0.5s ease forwards;
+}
+
+.ticker-track {
+  display: flex;
+  gap: 4rem;
+  animation: scroll 22s linear infinite;
+}
+
+.ticker-item {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.ticker-item::before {
+  content: '◆';
+  color: var(--amber);
+  font-size: 0.5rem;
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─── SECTION CHROME ─── */
+section { padding: 6rem 4rem; }
+
+.sec-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: baseline;
+  margin-bottom: 4rem;
+}
+
+.sec-num {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--amber);
+  text-transform: uppercase;
+  padding-top: 0.35rem;
+}
+
+.sec-title {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  border-top: 2px solid var(--ink);
+  padding-top: 0.75rem;
+}
+
+.sec-title em { font-style: italic; color: var(--amber); }
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 4rem;
+}
+
+/* ─── PROJECTS ─── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.proj-card {
+  background: var(--paper);
+  padding: 2rem 2rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+
+.proj-card:hover { background: var(--amber-pale); }
+
+.proj-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.proj-card:hover::after { transform: scaleX(1); }
+
+/* Layout spans */
+.proj-card.w8 { grid-column: span 8; }
+.proj-card.w4 { grid-column: span 4; }
+.proj-card.w6 { grid-column: span 6; }
+.proj-card.w5 { grid-column: span 5; }
+.proj-card.w7 { grid-column: span 7; }
+.proj-card.w12 { grid-column: span 12; }
+
+.proj-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.proj-tag::before { content: '01'; font-size: 0.55rem; color: var(--muted); }
+.proj-card:nth-child(2) .proj-tag::before { content: '02'; }
+.proj-card:nth-child(3) .proj-tag::before { content: '03'; }
+.proj-card:nth-child(4) .proj-tag::before { content: '04'; }
+.proj-card:nth-child(5) .proj-tag::before { content: '05'; }
+.proj-card:nth-child(6) .proj-tag::before { content: '06'; }
+.proj-card:nth-child(7) .proj-tag::before { content: '07'; }
+.proj-card:nth-child(8) .proj-tag::before { content: '08'; }
+.proj-card:nth-child(9) .proj-tag::before { content: '09'; }
+
+.proj-name {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+
+.proj-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  flex: 1;
+  font-weight: 300;
+}
+
+.proj-metrics {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.proj-metric-val {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.proj-metric-key {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
+.proj-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.55rem;
+  background: var(--paper2);
+}
+
+/* ─── SKILLS ─── */
+.skills-section { background: var(--ink); color: var(--paper); }
+.skills-section .sec-title { color: var(--paper); border-top-color: var(--paper); }
+.skills-section .sec-title em { color: var(--amber); }
+
+.skills-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3rem;
+}
+
+.skill-group-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.skill-list { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.skill-name {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: rgba(245,240,232,0.85);
+}
+
+.skill-level {
+  display: flex;
+  gap: 3px;
+}
+
+.skill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+
+.skill-dot.filled { background: var(--amber); }
+
+.skill-tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.6);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 0.3rem 0.75rem;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.skill-tag:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+/* ─── EDUCATION & POSITIONS ─── */
+.edu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.edu-card {
+  background: var(--paper);
+  padding: 2rem 2.5rem;
+  position: relative;
+}
+
+.edu-period {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--amber);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.edu-school {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.edu-degree {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.edu-badge {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--amber);
+  color: white;
+  padding: 0.2rem 0.6rem;
+}
+
+/* ─── ACHIEVEMENTS ─── */
+.achiev-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.achiev-card {
+  background: var(--paper);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: background 0.2s;
+}
+
+.achiev-card:hover { background: var(--amber-pale); }
+
+.achiev-medal {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.achiev-title {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.achiev-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ─── BEYOND ─── */
+.beyond-section { background: var(--paper2); }
+
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.interest-card {
+  background: var(--paper);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.interest-card:hover { background: var(--amber-pale); }
+
+.interest-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+.interest-name {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.interest-detail {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── LANGUAGES ─── */
+.lang-bar-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 1px;
+}
+
+.lang-card {
+  background: var(--paper);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.lang-flag { font-size: 1.5rem; }
+
+.lang-name {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.lang-level {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--amber);
+}
+
+/* ─── CONTACT ─── */
+.contact-section {
+  background: var(--ink);
+  color: var(--paper);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-section::before {
+  content: 'HIRE';
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 22vw;
+  font-weight: 900;
+  color: rgba(255,255,255,0.03);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -0.05em;
+}
+
+.contact-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 1.5rem;
+}
+
+.contact-headline {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  margin-bottom: 2rem;
+}
+
+.contact-headline em { font-style: italic; color: var(--amber); }
+
+.contact-sub {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: rgba(245,240,232,0.5);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.9rem 2rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--paper);
+  transition: all 0.2s;
+}
+
+.contact-link:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: white;
+}
+
+.contact-link.primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: white;
+}
+
+.contact-link.primary:hover {
+  background: var(--amber-light);
+  border-color: var(--amber-light);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(245,240,232,0.3);
+  padding: 1.25rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── POSITIONS ─── */
+.positions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.position-item {
+  background: var(--paper);
+  padding: 1.5rem 2.5rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.position-item:hover { background: var(--amber-pale); }
+
+.position-icon { font-size: 1.5rem; text-align: center; }
+
+.position-title {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.position-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  section { padding: 4rem 1.5rem; }
+  .hero-main { padding: 2.5rem 1.5rem 1.5rem; }
+  .hero-headline { font-size: clamp(3.5rem, 14vw, 6rem); }
+  .hero-bottom { grid-template-columns: 1fr; }
+  .hero-stats { display: none; }
+  .hero-ticker { padding: 0.75rem 1.5rem; }
+  .divider { margin: 0 1.5rem; }
+  .sec-header { grid-template-columns: 1fr; gap: 0.75rem; }
+  .proj-card.w8, .proj-card.w4, .proj-card.w6, .proj-card.w5, .proj-card.w7 { grid-column: span 12; }
+  .skills-cols { grid-template-columns: 1fr; }
+  .edu-grid { grid-template-columns: 1fr; }
+  .achiev-grid { grid-template-columns: 1fr; }
+  .interests-grid { grid-template-columns: repeat(2, 1fr); }
+  .lang-bar-list { grid-template-columns: 1fr 1fr; }
+  footer { flex-direction: column; gap: 0.4rem; padding: 1rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-name">Sashank <span>V.</span></div>
+  <ul class="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#achievements">Awards</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-main">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span>DS & AI · Masters' Union × IIT Guwahati · 2025–2029</span>
+    </div>
+
+    <h1 class="hero-headline">
+      Sashank<br>
+      <em>Vutukuri</em>
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="hero-bio">
+        Data Science & AI student with a passion for building <strong>real-world solutions</strong> — from AI automation and WhatsApp bots to drone engineering — driven by an entrepreneurial mindset and a love for turning ideas into <strong>impactful products</strong> that reach actual users.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">9+</div>
+          <div class="hero-stat-label">Projects Shipped</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">100+</div>
+          <div class="hero-stat-label">Real Users</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">2×</div>
+          <div class="hero-stat-label">Gold Medals</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4</div>
+          <div class="hero-stat-label">Languages</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-ticker">
+    <div class="ticker-track">
+      <span class="ticker-item">n8n Automation</span>
+      <span class="ticker-item">LLM Integration</span>
+      <span class="ticker-item">Python</span>
+      <span class="ticker-item">Drone Engineering</span>
+      <span class="ticker-item">Langflow</span>
+      <span class="ticker-item">Data Science</span>
+      <span class="ticker-item">Tableau</span>
+      <span class="ticker-item">Rapid Prototyping</span>
+      <span class="ticker-item">WhatsApp Bots</span>
+      <span class="ticker-item">Google AI Studio</span>
+      <span class="ticker-item">ML Classification</span>
+      <span class="ticker-item">n8n Automation</span>
+      <span class="ticker-item">LLM Integration</span>
+      <span class="ticker-item">Python</span>
+      <span class="ticker-item">Drone Engineering</span>
+      <span class="ticker-item">Langflow</span>
+      <span class="ticker-item">Data Science</span>
+      <span class="ticker-item">Tableau</span>
+      <span class="ticker-item">Rapid Prototyping</span>
+      <span class="ticker-item">WhatsApp Bots</span>
+      <span class="ticker-item">Google AI Studio</span>
+      <span class="ticker-item">ML Classification</span>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="sec-header reveal">
+    <div class="sec-num">01 / Projects</div>
+    <h2 class="sec-title">Things I've<br><em>Actually Built</em></h2>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- AgriBot — large card -->
+    <div class="proj-card w8 reveal">
+      <div class="proj-tag">AI · Automation · Co-Founder</div>
+      <div class="proj-name">AgriBot — AI WhatsApp Assistant</div>
+      <p class="proj-desc">
+        Co-founded an AI-powered WhatsApp chatbot that delivers real-time weather, soil health, and market price data to farmers with limited digital literacy. Built end-to-end on n8n workflows — identified the digital literacy barrier as the core problem, designed the solution around it, and ran a live pilot.
+      </p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">12</div>
+          <div class="proj-metric-key">Farmers Piloted</div>
+        </div>
+        <div>
+          <div class="proj-metric-val">E2E</div>
+          <div class="proj-metric-key">Ownership</div>
+        </div>
+        <div>
+          <div class="proj-metric-val">Live</div>
+          <div class="proj-metric-key">Deployed</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">n8n</span>
+        <span class="chip">WhatsApp API</span>
+        <span class="chip">LLM</span>
+        <span class="chip">Workflow Automation</span>
+        <span class="chip">Co-Founder</span>
+      </div>
+    </div>
+
+    <!-- College Finder -->
+    <div class="proj-card w4 reveal">
+      <div class="proj-tag">AI · Recommendation</div>
+      <div class="proj-name">College Finder</div>
+      <p class="proj-desc">AI-powered university recommendation platform matching students to courses based on grades and interests. Gathered real feedback from 100+ students.</p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">100+</div>
+          <div class="proj-metric-key">Students Tested</div>
+        </div>
+        <div>
+          <div class="proj-metric-val">High</div>
+          <div class="proj-metric-key">User Rating</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">Google Antigravity</span>
+        <span class="chip">AI Matching</span>
+      </div>
+    </div>
+
+    <!-- Amazon Reviews -->
+    <div class="proj-card w4 reveal">
+      <div class="proj-tag">ML · Data Science</div>
+      <div class="proj-name">Amazon Review Classifier</div>
+      <p class="proj-desc">Analysed 50,000+ product reviews; benchmarked multiple ML classification models to find the highest-performing approach.</p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">50K+</div>
+          <div class="proj-metric-key">Reviews Analysed</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">Python</span>
+        <span class="chip">ML</span>
+        <span class="chip">EDA</span>
+      </div>
+    </div>
+
+    <!-- Soil Bot -->
+    <div class="proj-card w4 reveal">
+      <div class="proj-tag">AI · Competition · Runner-Up</div>
+      <div class="proj-name">Soil Analysis Bot</div>
+      <p class="proj-desc">n8n workflow analysing soil reports and communicating findings to farmers in plain language via LLM. Built and presented to a panel in 20 minutes. Won ₹2,000.</p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">₹2K</div>
+          <div class="proj-metric-key">Prize Won</div>
+        </div>
+        <div>
+          <div class="proj-metric-val">20 min</div>
+          <div class="proj-metric-key">Build Time</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">n8n</span>
+        <span class="chip">LLM</span>
+        <span class="chip">Rapid Prototyping</span>
+      </div>
+    </div>
+
+    <!-- JobHunter -->
+    <div class="proj-card w4 reveal">
+      <div class="proj-tag">AI · Product</div>
+      <div class="proj-name">JobHunter</div>
+      <p class="proj-desc">Platform where users find, apply and track job applications with an AI agent that learns from past rejections and refines its search to suggest best-fit roles.</p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">AI</div>
+          <div class="proj-metric-key">Adaptive Agent</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">Google Antigravity</span>
+        <span class="chip">AI Agent</span>
+        <span class="chip">Automation</span>
+        <span class="chip">Full-Stack</span>
+      </div>
+    </div>
+
+    <!-- Drone -->
+    <div class="proj-card w6 reveal">
+      <div class="proj-tag">Hardware · Engineering</div>
+      <div class="proj-name">Drone Engineering Project</div>
+      <p class="proj-desc">Designed and assembled a fully functional drone from scratch, applying core principles of physics and electrical engineering. Achieved 10 minutes of stable, controlled flight with zero prior framework or guide.</p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">10 min</div>
+          <div class="proj-metric-key">Stable Flight</div>
+        </div>
+        <div>
+          <div class="proj-metric-val">From Scratch</div>
+          <div class="proj-metric-key">No Template</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">Drone Engineering</span>
+        <span class="chip">Physics</span>
+        <span class="chip">Electronics</span>
+        <span class="chip">Fusion 360</span>
+      </div>
+    </div>
+
+    <!-- Road Watch -->
+    <div class="proj-card w6 reveal">
+      <div class="proj-tag">Civic Tech · Mobile</div>
+      <div class="proj-name">Road Watch</div>
+      <p class="proj-desc">Civic tech app enabling Delhi Police and civilians to report traffic violations in real time from smartphones. Dual-user product — full ideation to delivery ownership.</p>
+      <div class="proj-metrics">
+        <div>
+          <div class="proj-metric-val">Dual</div>
+          <div class="proj-metric-key">User Modes</div>
+        </div>
+        <div>
+          <div class="proj-metric-val">Real-time</div>
+          <div class="proj-metric-key">Reporting</div>
+        </div>
+      </div>
+      <div class="proj-chips">
+        <span class="chip">Google Antigravity</span>
+        <span class="chip">Mobile App</span>
+        <span class="chip">Civic Tech</span>
+        <span class="chip">Real-time</span>
+      </div>
+    </div>
+
+    <!-- GymForge -->
+    <div class="proj-card w5 reveal">
+      <div class="proj-tag">Product · Gamification</div>
+      <div class="proj-name">GymForge</div>
+      <p class="proj-desc">Gamified fitness tracker using XP points, levels, and achievements to build long-term workout habits. Transforms fitness tracking from a chore into a game-like loop.</p>
+      <div class="proj-chips">
+        <span class="chip">Google Antigravity</span>
+        <span class="chip">App Dev</span>
+        <span class="chip">UX Design</span>
+        <span class="chip">Gamification</span>
+      </div>
+    </div>
+
+    <!-- AstraZeneca -->
+    <div class="proj-card w7 reveal">
+      <div class="proj-tag">Analytics · Pharma</div>
+      <div class="proj-name">AstraZeneca Site Analysis</div>
+      <p class="proj-desc">Used R to analyse AstraZeneca's site performance records and recommend optimal site selection based on historical performance data. Delivered data-driven recommendations to inform operational decisions.</p>
+      <div class="proj-chips">
+        <span class="chip">R</span>
+        <span class="chip">Statistical Analysis</span>
+        <span class="chip">Data Viz</span>
+        <span class="chip">Pharma</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills" class="skills-section">
+  <div class="sec-header reveal">
+    <div class="sec-num" style="color:var(--amber)">02 / Skills</div>
+    <h2 class="sec-title">What I<br><em>Work With</em></h2>
+  </div>
+
+  <div class="skills-cols">
+    <div class="reveal">
+      <div class="skill-group-label">Technical</div>
+      <div class="skill-list">
+        <div class="skill-item">
+          <span class="skill-name">n8n Workflow Automation</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">LLM Integration & Prompting</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Python</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Tableau</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Google AI Studio</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">ML Classification / EDA</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Financial Statement Analysis</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="skill-group-label">Design & Engineering</div>
+      <div class="skill-list">
+        <div class="skill-item">
+          <span class="skill-name">Drone Engineering</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Fusion 360</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">SelfCAD</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Rapid Prototyping</span>
+          <div class="skill-level">
+            <div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot filled"></div><div class="skill-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="skill-group-label">Tools & Platforms</div>
+      <div class="skill-tag-cloud">
+        <span class="skill-tag">Claude Code</span>
+        <span class="skill-tag">Google Antigravity</span>
+        <span class="skill-tag">App Building</span>
+        <span class="skill-tag">Langflow</span>
+        <span class="skill-tag">Excel</span>
+        <span class="skill-tag">Linux</span>
+        <span class="skill-tag">Lovable</span>
+        <span class="skill-tag">WhatsApp API</span>
+        <span class="skill-tag">R</span>
+        <span class="skill-tag">Bot Building</span>
+        <span class="skill-tag">Campaign Ops</span>
+        <span class="skill-tag">QA Testing</span>
+        <span class="skill-tag">Prompt Engineering</span>
+        <span class="skill-tag">User Research</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="sec-header reveal">
+    <div class="sec-num">03 / Education</div>
+    <h2 class="sec-title">Academic<br><em>Foundation</em></h2>
+  </div>
+
+  <div class="edu-grid reveal">
+    <div class="edu-card">
+      <div class="edu-period">2025 – 2029</div>
+      <div class="edu-school">Masters' Union × IIT Guwahati</div>
+      <div class="edu-degree">Undergraduate Program in Data Science and Artificial Intelligence</div>
+      <div class="edu-badge">Current</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-period">2022 – 2024</div>
+      <div class="edu-school">Help Academy, Malaysia</div>
+      <div class="edu-degree">Cambridge A Levels — 3A, 1B</div>
+      <div class="edu-badge">High Distinction</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-period">2022</div>
+      <div class="edu-school">Maz International School, Malaysia</div>
+      <div class="edu-degree">Pearson Edexcel IGCSE</div>
+      <div class="edu-badge">7A*</div>
+    </div>
+    <div class="edu-card" style="background: var(--amber-pale);">
+      <div class="edu-period">Work Experience</div>
+      <div class="edu-school">Private Tutor · Self-employed</div>
+      <div class="edu-degree">Tutored Grade 9–10 students in Mathematics, Physics, and Chemistry. Adapted teaching style to individual needs at RM 50/hr.</div>
+      <div class="edu-badge" style="background: var(--ink);">Malaysia</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="sec-header reveal">
+    <div class="sec-num">04 / Awards</div>
+    <h2 class="sec-title">Competitions<br><em>& Honours</em></h2>
+  </div>
+
+  <div class="achiev-grid reveal">
+    <div class="achiev-card">
+      <div class="achiev-medal">🥇</div>
+      <div class="achiev-title">Gold — World Robotics Organization</div>
+      <div class="achiev-desc">1st place in a competition hosted by the World Robotics Organization; recognised for outstanding technical design and engineering excellence.</div>
+    </div>
+    <div class="achiev-card">
+      <div class="achiev-medal">🥇</div>
+      <div class="achiev-title">Gold — World Young Inventors Competition</div>
+      <div class="achiev-desc">Designed and developed a solar-powered tent concept for eco-friendly camping and emergency shelter use.</div>
+    </div>
+    <div class="achiev-card">
+      <div class="achiev-medal">🏆</div>
+      <div class="achiev-title">Runner-Up — AI Challenge</div>
+      <div class="achiev-desc">Built n8n soil analysis bot and presented to a panel in 20 minutes as part of a 3-person team. Won ₹2,000 cash prize.</div>
+    </div>
+    <div class="achiev-card">
+      <div class="achiev-medal">🤖</div>
+      <div class="achiev-title">Finalist — World Robotics National (2018)</div>
+      <div class="achiev-desc">Qualified among the top teams nationally for innovative robot design and programming; competed against schools across the country.</div>
+    </div>
+    <div class="achiev-card">
+      <div class="achiev-medal">🏏</div>
+      <div class="achiev-title">3rd Place — U16 Inter-State Cricket</div>
+      <div class="achiev-desc">Represented Selangor State, Malaysia, in competitive cricket at state level. Demonstrated sustained commitment to team sport.</div>
+    </div>
+    <div class="achiev-card">
+      <div class="achiev-medal">💼</div>
+      <div class="achiev-title">Semi-Finalist — Taylor's Accounting Day</div>
+      <div class="achiev-desc">Pitched a strategic business solution addressing Maersk's storage and warehouse logistics challenges to an industry panel.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- POSITIONS -->
+<section>
+  <div class="sec-header reveal">
+    <div class="sec-num">05 / Leadership</div>
+    <h2 class="sec-title">Positions of<br><em>Responsibility</em></h2>
+  </div>
+
+  <div class="positions-list reveal">
+    <div class="position-item">
+      <div class="position-icon">📰</div>
+      <div>
+        <div class="position-title">Head Editor — Magazine Club, Help Academy</div>
+        <div class="position-desc">Managed an editorial team of 5 to produce and publish 5 magazines in a single year, including the flagship annual edition. Streamlined the proofreading workflow and delegated tasks effectively.</div>
+      </div>
+    </div>
+    <div class="position-item">
+      <div class="position-icon">🏠</div>
+      <div>
+        <div class="position-title">House Captain — Red Team (2022)</div>
+        <div class="position-desc">Represented and rallied a house of 200+ students across inter-house competitions. Coordinated event logistics and built strong team cohesion.</div>
+      </div>
+    </div>
+    <div class="position-item">
+      <div class="position-icon">⭐</div>
+      <div>
+        <div class="position-title">School Prefect — 3 Consecutive Years</div>
+        <div class="position-desc">Demonstrated consistent leadership, accountability, and a strong sense of responsibility within the school community across three academic years.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BEYOND -->
+<section class="beyond-section">
+  <div class="sec-header reveal">
+    <div class="sec-num">06 / Beyond Work</div>
+    <h2 class="sec-title">A Person,<br><em>Not Just a CV</em></h2>
+  </div>
+
+  <div class="interests-grid reveal">
+    <div class="interest-card">
+      <div class="interest-icon">🥁</div>
+      <div class="interest-name">Drums</div>
+      <div class="interest-detail">Grade 2</div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🎮</div>
+      <div class="interest-name">Gaming</div>
+      <div class="interest-detail">Elden Ring · Sekiro · Hollow Knight</div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🧩</div>
+      <div class="interest-name">Speed Cubing</div>
+      <div class="interest-detail">Rubik's Cube &lt; 15s</div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🏏</div>
+      <div class="interest-name">Cricket & Badminton</div>
+      <div class="interest-detail">State-level cricket player</div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">⌨️</div>
+      <div class="interest-name">Mechanical Keyboards</div>
+      <div class="interest-detail">Enthusiast builder</div>
+    </div>
+  </div>
+
+  <div class="lang-bar-list" style="margin-top:1px">
+    <div class="lang-card">
+      <div class="lang-flag">🇬🇧</div>
+      <div>
+        <div class="lang-name">English</div>
+        <div class="lang-level">Fluent</div>
+      </div>
+    </div>
+    <div class="lang-card">
+      <div class="lang-flag">🇮🇳</div>
+      <div>
+        <div class="lang-name">Telugu</div>
+        <div class="lang-level">Native</div>
+      </div>
+    </div>
+    <div class="lang-card">
+      <div class="lang-flag">🇮🇳</div>
+      <div>
+        <div class="lang-name">Hindi</div>
+        <div class="lang-level">Fluent</div>
+      </div>
+    </div>
+    <div class="lang-card">
+      <div class="lang-flag">🇪🇸</div>
+      <div>
+        <div class="lang-name">Spanish</div>
+        <div class="lang-level">A2 — Learning</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="contact-eyebrow">Available · Gurgaon · On-site Ready</div>
+  <h2 class="contact-headline">Let's Build<br><em>Something</em></h2>
+  <p class="contact-sub">Masters' Union × IIT Guwahati · DS & AI · 2025–2029</p>
+  <div class="contact-links">
+    <a href="mailto:sashank.vutukuri_ugdsai2029@mastersunion.org" class="contact-link primary">✉ Email Me</a>
+    <a href="https://www.linkedin.com/in/sashank-vutukuri-849514355" target="_blank" class="contact-link">↗ LinkedIn</a>
+    <a href="tel:+916300954539" class="contact-link">📞 +91 6300 954 539</a>
+  </div>
+</section>
+
+<footer>
+  <span>Sashank Vutukuri · DS & AI Builder</span>
+  <span>Portfolio · 2025</span>
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 70);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  els.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
